@@ -16,7 +16,7 @@ type StartUpdateOrFinishTransactionRequest = {
 
 export class Fiscaly {
 
-    authData: AuthData | undefined;
+    private authData: AuthData | undefined;
 
     constructor(private baseUrl: string) { }
 
