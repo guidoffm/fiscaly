@@ -16,9 +16,12 @@ type StartUpdateOrFinishTransactionRequest = {
 
 export class Fiscaly {
 
-    private authData: AuthData | undefined;
+    private authData?: AuthData;
+    baseUrl: string;
 
-    constructor(private baseUrl: string) { }
+    constructor(baseUrl?: string) { 
+        this.baseUrl = baseUrl || 'https://kassensichv-middleware.fiskaly.com/api/v2';
+    }
 
     async auth(apiKey: string, apiSecret: string) {
 
