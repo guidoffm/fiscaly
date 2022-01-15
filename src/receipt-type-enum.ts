@@ -1,0 +1,13 @@
+
+export enum ReceiptTypeEnum {
+    RECEIPT = 'RECEIPT',
+    TRAINING = 'TRAINING',
+    TRANSFER = 'TRANSFER',
+    ORDER = 'ORDER',
+    CANCELLATION = 'CANCELLATION',
+    ABORT = 'ABORT',
+    BENEFIT_IN_KIND = 'BENEFIT_IN_KIND',
+    INVOICE = 'INVOICE',
+    OTHER = 'OTHER',
+    ANNULATION = 'ANNULATION'
+}

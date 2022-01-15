@@ -50,11 +50,15 @@
   "bugs": {
     "url": "https://github.com/tomchen/example-typescript-package/issues"
   },
-  "dependencies": {},
+  "dependencies": {
+    "axios": "^0.24.0",
+    "uuid": "^8.3.2"
+  },
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
     "@types/jest": "^27.0.1",
+    "@types/uuid": "^8.3.3",
     "@typescript-eslint/eslint-plugin": "^4.31.1",
     "@typescript-eslint/parser": "^4.31.1",
     "eslint": "^7.32.0",
