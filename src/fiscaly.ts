@@ -62,7 +62,7 @@ export class Fiscaly {
         return response.data;
     }
 
-    async changeOrUnblockAdminPin(tssId: string, admin_puk: string, new_admin_pin: string) {
+    async changeOrUnblockAdminPin(tssId: string, admin_puk: string, new_admin_pin: string): Promise<void> {
         let config = {
             method: 'patch',
             url: `${this.baseUrl}/tss/${tssId}/admin`,
@@ -101,7 +101,7 @@ export class Fiscaly {
         // return tssId;
     }
 
-    async authenticateAdmin(tssId: string, adminPin: string) {
+    async authenticateAdmin(tssId: string, adminPin: string): Promise<void> {
         let config = {
             method: 'post',
             url: `${this.baseUrl}/tss/${tssId}/admin/auth`,
