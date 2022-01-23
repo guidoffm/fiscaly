@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { AuthData } from './auth-data';
+import { CreateClientResponse } from './create-client-response';
 import { CreateTssResponse } from './create-tss-response';
 import { Raw } from './raw';
 import { StandardV1 } from './standard-v1';
@@ -119,7 +120,7 @@ export class Fiscaly {
         console.log(response.data);
     }
 
-    async createClient(tssId: string): Promise<void> {
+    async createClient(tssId: string): Promise<CreateClientResponse> {
         const clientId = uuidv4();
         console.log(clientId);
         let config = {
@@ -137,6 +138,7 @@ export class Fiscaly {
 
         const response = await axios(config);
         console.log(response.data);
+        return response.data as CreateClientResponse;
     }
 
     async startUpdateOrFinishTransaction(tssId: string, clienId: string, transactionId: string | undefined, transactionRevision: number, state: TransactionStateEnum, schema: StandardV1 | Raw | undefined, metadata: object | undefined) {
