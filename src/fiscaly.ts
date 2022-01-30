@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { AuthData } from './auth-data';
 import { CreateClientResponse } from './create-client-response';
 import { CreateTssResponse } from './create-tss-response';
+import { ListTransactionsOfTssResponse } from './list-transactions-of-tss-response';
 import { Raw } from './raw';
 import { StandardV1 } from './standard-v1';
 import { StartUpdateOrFinishTransactionResponse } from './start-update-or-finish-transaction-response';
@@ -179,7 +180,7 @@ export class Fiscaly {
         return response.data;
     }
 
-    async listTransactionsOfTss(tssId: string, states: TransactionStateEnum[] | undefined) {
+    async listTransactionsOfTss(tssId: string, states: TransactionStateEnum[] | undefined): Promise<ListTransactionsOfTssResponse> {
         let statesFilter = '';
         let stateNumber = 0;
 
@@ -217,13 +218,13 @@ export class Fiscaly {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${this.authData?.access_token}`
             }
-        } as AxiosRequestConfig;
+        } as AxiosRequestConfig<ListTransactionsOfTssResponse>;
 
         // console.log(config.url);
 
         const response = await axios(config);
         // console.log(response.data.data.length);
-        return response.data;
+        return response.data as ListTransactionsOfTssResponse;
     }
 
     async retrieveTransaction(tssId: string, transactionId: string, transactionRevision: number | undefined): Promise<any> {

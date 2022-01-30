@@ -1,3 +1,6 @@
+import { Log } from "./log";
+import { Signature } from "./signature";
+
 export type StartUpdateOrFinishTransactionResponse = {
     schema: any;
     state: string;
@@ -15,16 +18,7 @@ export type StartUpdateOrFinishTransactionResponse = {
     _env: string;
     _version: string;
     metadata: object;
-    signature: {
-        value: string;
-        algorithm: string;
-        counter: number;
-        public_key: string;
-    };
-    log: {
-        operation: string;
-        timestamp: number;
-        timestamp_format: string;
-    };
+    signature: Signature;
+    log: Log;
     qr_code_data?: string;
 }
