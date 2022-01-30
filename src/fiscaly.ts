@@ -5,6 +5,7 @@ import { CreateClientResponse } from './create-client-response';
 import { CreateTssResponse } from './create-tss-response';
 import { ListTransactionsOfTssResponse } from './list-transactions-of-tss-response';
 import { Raw } from './raw';
+import { RetrieveTransactionResponse } from './retrieve-tansaction-response';
 import { StandardV1 } from './standard-v1';
 import { StartUpdateOrFinishTransactionResponse } from './start-update-or-finish-transaction-response';
 import { TransactionStateEnum } from './transaction-state-enum';
@@ -227,7 +228,7 @@ export class Fiscaly {
         return response.data as ListTransactionsOfTssResponse;
     }
 
-    async retrieveTransaction(tssId: string, transactionId: string, transactionRevision: number | undefined): Promise<any> {
+    async retrieveTransaction(tssId: string, transactionId: string, transactionRevision: number | undefined): Promise<RetrieveTransactionResponse> {
         let config = {
             method: 'get',
             url: transactionRevision ?
@@ -241,7 +242,7 @@ export class Fiscaly {
 
         const response = await axios(config);
         console.log(response.data);
-        return response.data;
+        return response.data as RetrieveTransactionResponse;
     }
 
     async retrieveTransactionAllRevisions(tssId: string, transactionId: string): Promise<object[]> {
