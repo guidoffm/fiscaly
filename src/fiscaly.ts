@@ -245,8 +245,8 @@ export class Fiscaly {
         return response.data as RetrieveTransactionResponse;
     }
 
-    async retrieveTransactionAllRevisions(tssId: string, transactionId: string): Promise<object[]> {
-        const allRevisions = [];
+    async retrieveTransactionAllRevisions(tssId: string, transactionId: string): Promise<RetrieveTransactionResponse[]> {
+        const allRevisions = [] as RetrieveTransactionResponse[];
         let latestRevision = -1;
         for (let currentVevisionNumber = 1; latestRevision === -1 || currentVevisionNumber <= latestRevision; currentVevisionNumber++) {
             const revision = await this.retrieveTransaction(tssId, transactionId, currentVevisionNumber);
