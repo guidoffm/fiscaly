@@ -48,7 +48,7 @@ export class Fiscaly {
 
     async createTss(): Promise<CreateTssResponse> {
         const tssId = uuidv4();
-        console.log(tssId);
+        // console.log(tssId);
         let config = {
             method: 'put',
             url: `${this.baseUrl}/tss/${tssId}`,
@@ -62,7 +62,7 @@ export class Fiscaly {
         } as AxiosRequestConfig;
 
         const response = await axios(config);
-        console.log(response.data);
+        // console.log(response.data);
         return response.data;
     }
 
@@ -82,7 +82,7 @@ export class Fiscaly {
         } as AxiosRequestConfig;
 
         const response = await axios(config);
-        console.log(response.data);
+        // console.log(response.data);
         // return tssId;
     }
 
@@ -101,7 +101,7 @@ export class Fiscaly {
         } as AxiosRequestConfig;
 
         const response = await axios(config);
-        console.log(response.data);
+        // console.log(response.data);
         // return tssId;
     }
 
@@ -120,12 +120,12 @@ export class Fiscaly {
         } as AxiosRequestConfig;
 
         const response = await axios(config);
-        console.log(response.data);
+        // console.log(response.data);
     }
 
     async createClient(tssId: string): Promise<CreateClientResponse> {
         const clientId = uuidv4();
-        console.log(clientId);
+        // console.log(clientId);
         let config = {
             method: 'put',
             url: `${this.baseUrl}/tss/${tssId}/client/${clientId}`,
@@ -140,7 +140,7 @@ export class Fiscaly {
         } as AxiosRequestConfig;
 
         const response = await axios(config);
-        console.log(response.data);
+        // console.log(response.data);
         return response.data as CreateClientResponse;
     }
 
@@ -241,7 +241,7 @@ export class Fiscaly {
         } as AxiosRequestConfig;
 
         const response = await axios(config);
-        console.log(response.data);
+        // console.log(response.data);
         return response.data as RetrieveTransactionResponse;
     }
 
