@@ -4,11 +4,13 @@ import { AuthData } from './auth-data';
 import { CreateClientResponse } from './create-client-response';
 import { CreateTssResponse } from './create-tss-response';
 import { ListTransactionsOfTssResponse } from './list-transactions-of-tss-response';
+import { ListTssResponse } from './list-tss-response';
 import { Raw } from './raw';
 import { RetrieveTransactionResponse } from './retrieve-tansaction-response';
 import { StandardV1 } from './standard-v1';
 import { StartUpdateOrFinishTransactionResponse } from './start-update-or-finish-transaction-response';
 import { TransactionStateEnum } from './transaction-state-enum';
+import { TssStateData } from './tss-state-data';
 import { TssState } from './tss-state-enum';
 
 type StartUpdateOrFinishTransactionRequest = {
@@ -23,7 +25,7 @@ export class Fiscaly {
     private authData?: AuthData;
     baseUrl: string;
 
-    constructor(baseUrl?: string) { 
+    constructor(baseUrl?: string) {
         this.baseUrl = baseUrl || 'https://kassensichv-middleware.fiskaly.com/api/v2';
     }
 
@@ -44,6 +46,38 @@ export class Fiscaly {
         const response = await axios(config);
         this.authData = response.data;
         // console.log(this.authData);
+    }
+
+    async listTss() {
+        let config = {
+            method: 'get',
+            url: `${this.baseUrl}/tss`,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.authData?.access_token}`
+
+            }
+        } as AxiosRequestConfig;
+
+        const response = await axios(config);
+        // console.log(response.data);
+        return response.data as ListTssResponse;
+    }
+
+    async retrieveTss(tssId: string) {
+        let config = {
+            method: 'get',
+            url: `${this.baseUrl}/tss/${tssId}`,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.authData?.access_token}`
+
+            }
+        } as AxiosRequestConfig;
+
+        const response = await axios(config);
+        // console.log(response.data);
+        return response.data as TssStateData;
     }
 
     async createTss(): Promise<CreateTssResponse> {

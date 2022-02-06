@@ -33,3 +33,20 @@ it('works', async () => {
   await fiscaly.updateTss(tssId, TssState.DISABLED);
   // await fiscaly.createClient(tssId);
 });
+
+it('listTss and retrieveTss', async () => {
+  expect(fiscaly).toBeTruthy();
+
+  await fiscaly.auth(apiKey, apiSecret);
+
+  const list = await fiscaly.listTss();
+  // console.log(list);
+  expect (Array.isArray(list.data));
+
+  for(let i=0; i<list.count; i++){
+    const item = list.data[i];
+    const res = await fiscaly.retrieveTss(item._id);
+    // console.log(res);
+    expect(res.state).toBeTruthy();
+  };
+});
