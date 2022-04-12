@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { AuthData } from './auth-data';
 import { CreateClientResponse } from './create-client-response';
@@ -218,6 +218,10 @@ export class Fiscaly {
     async listTransactionsOfTss(tssId: string, states: TransactionStateEnum[] | undefined): Promise<ListTransactionsOfTssResponse> {
         let statesFilter = '';
         let stateNumber = 0;
+        let offset = 0;
+        const limit = 100;
+        let count = 0;
+
 
         if (states && states.length > 0) {
 
@@ -243,23 +247,42 @@ export class Fiscaly {
             }
         }
 
+        let currentCount = 0;
+        const data = [];
+        let responseData: ListTransactionsOfTssResponse;
+        do {
 
-        let config = {
-            method: 'get',
-            url: statesFilter.length ?
-                `${this.baseUrl}/tss/${tssId}/tx?${statesFilter}` :
-                `${this.baseUrl}/tss/${tssId}/tx`,
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.authData?.access_token}`
+            let url = `${this.baseUrl}/tss/${tssId}/tx?offset=${offset}`;
+
+            if (states?.length) {
+                url += statesFilter;
             }
-        } as AxiosRequestConfig<ListTransactionsOfTssResponse>;
 
-        // console.log(config.url);
+            let config = {
+                method: 'get',
+                url: url,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.authData?.access_token}`
+                }
+            } as AxiosRequestConfig<ListTransactionsOfTssResponse>;
 
-        const response = await axios(config);
-        // console.log(response.data.data.length);
-        return response.data as ListTransactionsOfTssResponse;
+            // console.log(config.url);
+
+            const response = await axios(config);
+            // console.log(response.data.data.length);
+            responseData = response.data as ListTransactionsOfTssResponse;
+            currentCount = responseData.count;
+            data.push(...responseData.data);
+            count += currentCount;
+        } while (currentCount === limit);
+        return {
+            count: count,
+            data: data,
+            _env: responseData._env,
+            _type: responseData._type,
+            _version: responseData._version
+        } as ListTransactionsOfTssResponse;
     }
 
     async retrieveTransaction(tssId: string, transactionId: string, transactionRevision: number | undefined): Promise<RetrieveTransactionResponse> {
