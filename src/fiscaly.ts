@@ -252,10 +252,10 @@ export class Fiscaly {
         let responseData: ListTransactionsOfTssResponse;
         do {
 
-            let url = `${this.baseUrl}/tss/${tssId}/tx?offset=${offset}`;
+            let url = `${this.baseUrl}/tss/${tssId}/tx?offset=${offset}&limit=${limit}`;
 
             if (states?.length) {
-                url += statesFilter;
+                url += `&${statesFilter}`;
             }
 
             let config = {
