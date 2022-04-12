@@ -9,16 +9,11 @@ import { Raw } from './raw';
 import { RetrieveTransactionResponse } from './retrieve-tansaction-response';
 import { StandardV1 } from './standard-v1';
 import { StartUpdateOrFinishTransactionResponse } from './start-update-or-finish-transaction-response';
+import { StartUpdateOrFinishTransactionRequest } from './start-update-or-finish-transaction-request';
 import { TransactionStateEnum } from './transaction-state-enum';
 import { TssStateData } from './tss-state-data';
 import { TssState } from './tss-state-enum';
-
-type StartUpdateOrFinishTransactionRequest = {
-    state: TransactionStateEnum;
-    client_id: string;
-    schema: StandardV1 | Raw;
-    metadata: object;
-};
+import { MetadataType } from './metadata-type';
 
 export class Fiscaly {
 
@@ -178,7 +173,7 @@ export class Fiscaly {
         return response.data as CreateClientResponse;
     }
 
-    async startUpdateOrFinishTransaction(tssId: string, clienId: string, transactionId: string | undefined, transactionRevision: number, state: TransactionStateEnum, schema: StandardV1 | Raw | undefined, metadata: object | undefined): Promise<StartUpdateOrFinishTransactionResponse> {
+    async startUpdateOrFinishTransaction(tssId: string, clienId: string, transactionId: string | undefined, transactionRevision: number, state: TransactionStateEnum, schema: StandardV1 | Raw | undefined, metadata: MetadataType | undefined): Promise<StartUpdateOrFinishTransactionResponse> {
 
         if (!transactionId) {
             transactionId = uuidv4();
