@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { AuthData } from './auth-data';
 import { CreateClientResponse } from './create-client-response';
@@ -13,7 +13,6 @@ import { StartUpdateOrFinishTransactionRequest } from './start-update-or-finish-
 import { TransactionStateEnum } from './transaction-state-enum';
 import { TssStateData } from './tss-state-data';
 import { TssState } from './tss-state-enum';
-import { MetadataType } from './metadata-type';
 
 export class Fiscaly {
 
@@ -173,7 +172,7 @@ export class Fiscaly {
         return response.data as CreateClientResponse;
     }
 
-    async startUpdateOrFinishTransaction(tssId: string, clienId: string, transactionId: string | undefined, transactionRevision: number, state: TransactionStateEnum, schema: StandardV1 | Raw | undefined, metadata: MetadataType | undefined): Promise<StartUpdateOrFinishTransactionResponse> {
+    async startUpdateOrFinishTransaction(tssId: string, clienId: string, transactionId: string | undefined, transactionRevision: number, state: TransactionStateEnum, schema: StandardV1 | Raw | undefined, metadata: any | undefined): Promise<StartUpdateOrFinishTransactionResponse> {
 
         if (!transactionId) {
             transactionId = uuidv4();

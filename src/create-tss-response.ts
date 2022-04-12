@@ -10,7 +10,7 @@ export type CreateTssResponse = {
     max_number_registered_clients: string;
     max_number_active_transactions: string;
     supported_update_variants: string;
-    metadata: object;
+    metadata: any;
     _id: string;
     _type: string;
     _env: string;

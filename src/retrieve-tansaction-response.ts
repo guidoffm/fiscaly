@@ -13,7 +13,7 @@ export type RetrieveTransactionResponse = {
     revision: number;
     latest_revision: number;
     tss_id: string;
-    metadata: object,
+    metadata: any,
     _type: string;
     _id: string;
     _env: string;

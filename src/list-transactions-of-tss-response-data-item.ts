@@ -7,7 +7,7 @@ export type ListTransactionsOfTssResponseDataItem = {
     client_serial_number: string;
     latest_revision: number;
     log: Log;
-    metadata: object;
+    metadata: any;
     number: number;
     qr_code_data?: string;
     revision: number;

@@ -17,7 +17,7 @@ export type StartUpdateOrFinishTransactionResponse = {
     _type: string;
     _env: string;
     _version: string;
-    metadata: object;
+    metadata: any;
     signature: Signature;
     log: Log;
     qr_code_data?: string;

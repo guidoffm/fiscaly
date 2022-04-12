@@ -28,7 +28,6 @@ export * from './amount-per-vat-rate'
 export * from './auth-data';
 export * from './create-tss-response';
 export * from './line-item';
-export * from './metadata-type';
 export * from './order';
 export * from './payment-type-enum';
 export * from './raw';
@@ -37,6 +36,5 @@ export * from './receipt';
 export * from './schema';
 export * from './standard-v1';
 export * from './transaction-state-enum';
-export * from "./transaction-type";
 export * from './tss-state-enum';
 export * from './vat-rate-enum';

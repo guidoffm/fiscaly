@@ -4,7 +4,7 @@ export type CreateClientResponse = {
     serial_number: string;
     state: ClientState;
     tss_id: string;
-    metadata: object;
+    metadata: any;
     _id: string;
     _type: string;
     _env: string;
