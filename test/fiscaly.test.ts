@@ -1,72 +1,172 @@
-import { Fiscaly, TssState } from '../src/index'
+import { Fiscaly, TssState, TransactionStateEnum } from '../src/index'
 
-const apiKey = process.env['API_KEY'] as string;
-const apiSecret = process.env['API_SECRET'] as string;
+describe('Fiscaly', () => {
 
-const fiscaly = new Fiscaly();
+  let fiscaly: Fiscaly;
 
-it('check API_KEY is there', () => {
-  expect(apiKey).toBeTruthy();
-});
+  beforeEach(() => {
+    fiscaly = new Fiscaly('https://api.test.fiskaly.com/api/v2');
+  });
 
-it('check API_SECRET is there', () => {
-  expect(apiSecret).toBeTruthy();
-});
+  it('should create an instance with default base URL', () => {
+    const f = new Fiscaly();
+    expect(f.baseUrl).toBe('https://kassensichv-middleware.fiskaly.com/api/v2');
+  });
 
-jest.setTimeout(60000);
+  it('should create an instance with custom base URL', () => {
+    expect(fiscaly.baseUrl).toBe('https://api.test.fiskaly.com/api/v2');
+  });
 
-// it('works', async () => {
-  
-//   expect(fiscaly).toBeTruthy();
+  it('should authenticate and store auth data', async () => {
+    const mockAuthData = {
+      access_token: 'test-token',
+      refresh_token: 'test-refresh',
+      access_token_expires_at: 9999999999
+    };
 
-//   await fiscaly.auth(apiKey, apiSecret);
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(mockAuthData)
+    });
 
-//   const createTssResponse = await fiscaly.createTss();
+    await fiscaly.auth('test-key', 'test-secret');
 
-//   const tssId = createTssResponse._id;
-//   const adminPuk = createTssResponse.admin_puk;
-//   await fiscaly.updateTss(tssId, TssState.UNINITIALIZED);
-//   const newAdminPin = '123456';
-//   await fiscaly.changeOrUnblockAdminPin(tssId, adminPuk, newAdminPin);
-//   await fiscaly.authenticateAdmin(tssId, newAdminPin);
-//   await fiscaly.updateTss(tssId, TssState.INITIALIZED);
-//   await fiscaly.updateTss(tssId, TssState.DISABLED);
-//   // await fiscaly.createClient(tssId);
-// });
+    expect(fetch).toHaveBeenCalledWith(
+      'https://api.test.fiskaly.com/api/v2/auth',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ api_key: 'test-key', api_secret: 'test-secret' })
+      })
+    );
+  });
 
-// it('listTss and retrieveTss', async () => {
-//   expect(fiscaly).toBeTruthy();
+  describe('authenticated requests', () => {
+    beforeEach(async () => {
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ access_token: 'test-token' })
+      });
+      await fiscaly.auth('key', 'secret');
+    });
 
-//   await fiscaly.auth(apiKey, apiSecret);
+    it('should list TSS', async () => {
+      const mockResponse = { count: 1, data: [{ _id: 'tss-1', state: 'INITIALIZED' }] };
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve(mockResponse)
+      });
 
-//   const list = await fiscaly.listTss();
-//   // console.log(list);
-//   expect (Array.isArray(list.data));
+      const result = await fiscaly.listTss();
+      expect(result.data).toHaveLength(1);
+      expect(fetch).toHaveBeenCalledWith(
+        'https://api.test.fiskaly.com/api/v2/tss',
+        expect.objectContaining({
+          method: 'GET',
+          headers: expect.objectContaining({ Authorization: 'Bearer test-token' })
+        })
+      );
+    });
 
-//   for(let i=0; i<list.count; i++){
-//     const item = list.data[i];
-//     const res = await fiscaly.retrieveTss(item._id);
-//     // console.log(res);
-//     expect(res.state).toBeTruthy();
-//   };
-// });
+    it('should retrieve a specific TSS', async () => {
+      const mockTss = { _id: 'tss-1', state: 'INITIALIZED' };
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve(mockTss)
+      });
 
-it('Get active Tss and list transactions', async () => {
-  expect(fiscaly).toBeTruthy();
+      const result = await fiscaly.retrieveTss('tss-1');
+      expect(result.state).toBe('INITIALIZED');
+    });
 
-  await fiscaly.auth(apiKey, apiSecret);
+    it('should create a TSS', async () => {
+      const mockResponse = { _id: 'new-tss', admin_puk: '12345' };
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve(mockResponse)
+      });
 
-  const list = await fiscaly.listTss();
-  // console.log(list);
-  expect (Array.isArray(list.data));
+      const result = await fiscaly.createTss();
+      expect(result._id).toBe('new-tss');
+      expect(result.admin_puk).toBe('12345');
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/tss/'),
+        expect.objectContaining({ method: 'PUT' })
+      );
+    });
 
-  const initializedTss = list.data.filter(x => x.state === TssState.INITIALIZED);
-  for(let i=0; i<initializedTss.length; i++){
-    const item = initializedTss[i];
-    const res = await fiscaly.retrieveTss(item._id);
-    console.log(res);
-    const transactions = await fiscaly.listTransactionsOfTss(item._id, undefined);
-    console.log(transactions);
-    expect(res.state).toBeTruthy();
-  };
+    it('should update TSS state', async () => {
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({})
+      });
+
+      await fiscaly.updateTss('tss-1', TssState.INITIALIZED);
+      expect(fetch).toHaveBeenCalledWith(
+        'https://api.test.fiskaly.com/api/v2/tss/tss-1',
+        expect.objectContaining({
+          method: 'PATCH',
+          body: JSON.stringify({ state: 'INITIALIZED' })
+        })
+      );
+    });
+
+    it('should create a client', async () => {
+      const mockClient = { _id: 'client-1', state: 'REGISTERED' };
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve(mockClient)
+      });
+
+      const result = await fiscaly.createClient('tss-1');
+      expect(result._id).toBe('client-1');
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/tss/tss-1/client/'),
+        expect.objectContaining({ method: 'PUT' })
+      );
+    });
+
+    it('should start a transaction', async () => {
+      const mockTx = { _id: 'tx-1', number: 1, state: 'ACTIVE' };
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve(mockTx)
+      });
+
+      const result = await fiscaly.startUpdateOrFinishTransaction(
+        'tss-1', 'client-1', 'tx-1', 1, TransactionStateEnum.ACTIVE, undefined, undefined
+      );
+      expect(result.number).toBe(1);
+      expect(result.state).toBe('ACTIVE');
+    });
+
+    it('should list transactions with pagination', async () => {
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({
+          count: 2,
+          data: [{ _id: 'tx-1' }, { _id: 'tx-2' }],
+          _env: 'test',
+          _type: 'TRANSACTION',
+          _version: '2'
+        })
+      });
+
+      const result = await fiscaly.listTransactionsOfTss('tss-1', [TransactionStateEnum.ACTIVE]);
+      expect(result.data).toHaveLength(2);
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('states[0]=ACTIVE'),
+        expect.anything()
+      );
+    });
+
+    it('should throw on HTTP error', async () => {
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: false,
+        status: 401,
+        statusText: 'Unauthorized'
+      });
+
+      await expect(fiscaly.listTss()).rejects.toThrow('HTTP 401: Unauthorized');
+    });
+  });
 });
